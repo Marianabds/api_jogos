@@ -1,7 +1,15 @@
 const express = require("express");
+const cors = require("cors");
 const authRoutes = require("./src/database/controllers/AuthController");
 
 const app = express();
+
+// Configuração do CORS
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 // Middleware para JSON
 app.use(express.json());
