@@ -1,13 +1,14 @@
 {
   "name": "api_trabalho",
   "version": "1.0.0",
+  "description": "API de jogos",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
-  "type": "commonjs",
   "dependencies": {
-    "express": "^5.2.1",
-    "sqlite3": "^5.1.7"
-  }
+    "better-sqlite3": "^12.9.0",
+    "express": "^5.2.1"
+  },
+  "license": "ISC"
 }
