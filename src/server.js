@@ -1,35 +1,46 @@
 const express = require("express");
-const Database = require('better-sqlite3');
-const path = require('path');
-const bodyParser = require("body-parser");
+const sqlite3 = require("sqlite3").verbose();
 const authRoutes = require("./database/controllers/AuthController");
 
 const app = express();
 
-// Usar caminho persistente no Railway ou local
-const dbPath = process.env.DATABASE_PATH || './database.db';
-console.log(`📁 Banco de dados em: ${dbPath}`);
-
-const db = new Database(dbPath);
-
-console.log('✅ Banco de dados SQLite conectado!');
-
-db.exec(`
-  CREATE TABLE IF NOT EXISTS jogos (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    nome TEXT,
-    tipo TEXT,
-    nota INTEGER,
-    review TEXT
-  )
-`);
-
-app.use(bodyParser.json());
-app.use(authRoutes);
-
-const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => {
-  console.log(`🚀 Servidor rodando na porta ${PORT}`);
+const db = new sqlite3.Database("./database.db", (err) => {
+  if (err) {
+    console.error("Erro ao conectar ao banco de dados:", err);
+  } else {
+    console.log("Banco de dados SQLite conectado!");
+  }
 });
 
-module.exports = { db };
+db.serialize(() => {
+  db.run(`
+    CREATE TABLE IF NOT EXISTS jogos (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      nome TEXT NOT NULL,
+      tipo TEXT NOT NULL,
+      nota INTEGER NOT NULL,
+      review TEXT NOT NULL
+    )
+  `);
+});
+
+app.use(express.json());
+
+app.use((req, res, next) => {
+  req.db = db;
+  next();
+});
+
+app.use(authRoutes);
+
+app.get("/", (req, res) => {
+  res.status(200).json({
+    message: "API está funcionando!"
+  });
+});
+
+const PORT = process.env.PORT || 3001;
+
+app.listen(PORT, () => {
+  console.log(`Servidor rodando na porta ${PORT}`);
+});
