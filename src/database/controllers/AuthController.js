@@ -2,9 +2,8 @@ const express = require("express");
 const router = express.Router();
 const Database = require('better-sqlite3');
 
-// Conectar ao banco (mesma conexão do server, ou cria uma nova)
+// Conectar ao banco
 const db = new Database('./database.db');
-const dbPath = process.env.DATABASE_PATH || './database.db';
 
 function formatarJogo(jogo) {
   return {
@@ -22,7 +21,7 @@ router.post("/login", (req, res) => {
 
   if (email === "usuario@esoft.com" && password === "Abc123") {
     return res.status(200).json({
-      token: "550e8400-e29b-41d4-a716-446655440000" // UUID fixo
+      token: "550e8400-e29b-41d4-a716-446655440000"
     });
   }
 
