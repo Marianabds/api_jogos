@@ -1,38 +1,23 @@
 const express = require("express");
-const sqlite3 = require("sqlite3").verbose();
-const authRoutes = require("./database/controllers/AuthController");
+const authRoutes = require("./src/database/controllers/AuthController");
 
 const app = express();
 
-const db = new sqlite3.Database("./database.db", (err) => {
-  if (err) {
-    console.error("Erro ao conectar ao banco de dados:", err);
-  } else {
-    console.log("Banco de dados SQLite conectado!");
-  }
-});
-
-db.run(`
-  CREATE TABLE IF NOT EXISTS jogos (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    nome TEXT,
-    tipo TEXT,
-    nota INTEGER,
-    review TEXT
-  )
-`);
-
+// Middleware para JSON
 app.use(express.json());
+
+// Usar as rotas da API
 app.use(authRoutes);
 
+// Rota raiz
 app.get("/", (req, res) => {
   res.status(200).json({
-    mensagem: "API funcionando"
+    mensagem: "API funcionando no Render!"
   });
 });
 
 const PORT = process.env.PORT || 3001;
 
 app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
+  console.log(`✅ Servidor rodando na porta ${PORT}`);
 });
